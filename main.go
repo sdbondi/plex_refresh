@@ -19,7 +19,7 @@ func refreshPlex(_mask uint32, _name string) <-chan bool {
 
 	// Unnecessary but fun ;)
 	go func() {
-		out <- plex.Refresh()
+		out <- plex.Refresh(1)
 		close(out)
 	}()
 
