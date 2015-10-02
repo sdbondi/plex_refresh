@@ -9,21 +9,19 @@ import (
 	"sdbondi/watcher"
 )
 
+const (
+	SECTION_ID int = 1
+)
+
 func printUsage() {
 	fmt.Printf("Usage: %s [watch dir]\n", os.Args[0])
 	os.Exit(1)
 }
 
-func refreshPlex(_mask uint32, _name string) <-chan bool {
-	out := make(chan bool)
-
-	// Unnecessary but fun ;)
-	go func() {
-		out <- plex.Refresh(1)
-		close(out)
-	}()
-
-	return out
+func refreshPlex(sectionId int) watcher.CaptureEvent {
+	return func(_mask uint32, _name string) bool {
+		return plex.Refresh(sectionId)
+	}
 }
 
 func main() {
@@ -46,5 +44,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	watcher.WatchCreateDelete(watchDir, refreshPlex)
+	watcher.WatchCreateDelete(watchDir, refreshPlex(SECTION_ID))
 }
