@@ -11,7 +11,11 @@ const (
 )
 
 func Refresh(sectionId int) bool {
-	_, err := http.Get(fmt.Sprintf(PLEX_REFRESH_URL, sectionId))
+	resp, err := http.Get(fmt.Sprintf(PLEX_REFRESH_URL, sectionId))
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+
 	if err != nil {
 		log.Fatal(err)
 		return false
