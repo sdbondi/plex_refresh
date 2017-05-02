@@ -3,13 +3,13 @@ package watcher
 import (
 	"log"
 
-	"golang.org/x/exp/inotify"
+	"gopkg.in/fsnotify.v0"
 )
 
-type CaptureEvent func(uint32, string) bool
+type CaptureEvent func(*fsnotify.FileEvent) bool
 
 func WatchCreateDelete(dir string, onEvent CaptureEvent) {
-	watcher, err := inotify.NewWatcher()
+	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -21,8 +21,8 @@ func WatchCreateDelete(dir string, onEvent CaptureEvent) {
 	for {
 		select {
 		case ev := <-watcher.Event:
-			if ev.Mask&(inotify.IN_CREATE|inotify.IN_DELETE|inotify.IN_MOVE) != 0 {
-				success := onEvent(ev.Mask, ev.Name)
+			if ev.IsCreate() || ev.IsDelete() || ev.IsRename() {
+				success := onEvent(ev)
 				if !success {
 					log.Fatal("Callback failed")
 				}

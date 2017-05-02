@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"gopkg.in/fsnotify.v0"
+
 	"sdbondi/plex"
 	"sdbondi/watcher"
 )
@@ -19,7 +21,7 @@ func printUsage() {
 }
 
 func refreshPlex(sectionId int) watcher.CaptureEvent {
-	return func(_mask uint32, _name string) bool {
+	return func(_event *fsnotify.FileEvent) bool {
 		return plex.Refresh(sectionId)
 	}
 }
