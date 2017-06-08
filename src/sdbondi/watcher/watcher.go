@@ -21,6 +21,7 @@ func WatchCreateDelete(dir string, onEvent CaptureEvent) {
 	for {
 		select {
 		case ev := <-watcher.Event:
+			log.Println("File event: ", ev.Name)
 			if ev.IsCreate() || ev.IsDelete() || ev.IsRename() {
 				success := onEvent(ev)
 				if !success {
